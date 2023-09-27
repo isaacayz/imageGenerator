@@ -17,13 +17,12 @@ async def index():
     return render_template('index.html')
 
 
-
 @app.route('/generateimage')
 async def generate():
     try:
         # Generate an Image
         generate_response = await leap.images.generate(
-            prompt="A cat drinking hot coffee",  # required
+            prompt="A ship in a bottle",  # required
             model_id="26a1a203-3a46-42cb-8cfa-f4de075907d8",  # required
             negative_prompt="asymmetric, bad hands, bad hair",  # optional
             steps=50,  # optional

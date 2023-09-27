@@ -11,11 +11,9 @@ leap = Leap(
     access_token=constants.key
 )
 
-
 @app.route('/')
 async def index():
     return render_template('index.html')
-
 
 @app.route('/generateimage')
 async def generate():
@@ -42,6 +40,10 @@ async def generate():
         pprint(e.reason)
         pprint(e.round_trip_time)
 
+
+@app.route('/listImages')
+def listImages():
+    return render_template('listImages.html')
 
 
 if __name__ == '__main__':

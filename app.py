@@ -16,11 +16,11 @@ async def index():
     return render_template('index.html')
 
 @app.route('/generateimage')
-async def generate():
+def generate():
     try:
         # Generate an Image
-        generate_response = await leap.images.generate(
-            prompt="A ship in a bottle",  # required
+        generate_response = leap.images.generate(
+            prompt="a boy and his lover",  # required
             model_id="26a1a203-3a46-42cb-8cfa-f4de075907d8",  # required
             negative_prompt="asymmetric, bad hands, bad hair",  # optional
             steps=50,  # optional
@@ -32,13 +32,10 @@ async def generate():
             #webhook_url="string_example",  # optional
         )
         pprint(generate_response.body)
+        return render_template('generateImage.html', image=generate_response.body)
     except ApiException as e:
         print("Exception when calling ImagesApi.generate: %s\n" % e)
         pprint(e.body)
-        pprint(e.headers)
-        pprint(e.status)
-        pprint(e.reason)
-        pprint(e.round_trip_time)
 
 
 @app.route('/listImages')

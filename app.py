@@ -6,7 +6,6 @@ from flask_bootstrap import Bootstrap
 import constants
 
 app = Flask(__name__)
-Bootstrap(app)
 
 leap = Leap(
     access_token=constants.key
@@ -15,6 +14,12 @@ leap = Leap(
 
 @app.route('/')
 async def index():
+    return render_template('index.html')
+
+
+
+@app.route('/generateimage')
+async def generate():
     try:
         # Generate an Image
         generate_response = await leap.images.generate(

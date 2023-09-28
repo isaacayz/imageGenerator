@@ -1,0 +1,10 @@
+flask
+requests
+render_template
+pprint
+ApiException
+leap-python-sdk==1.1.4
+asyncio
+flask-bootstrap
+asgiref
+pillow

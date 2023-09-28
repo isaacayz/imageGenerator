@@ -87,8 +87,40 @@ def listImages():
     
     return load_url('uri') #render_template('listImages.html', image=image)
 
+try:
+    # List All Image Jobs
+    list_all_response = leap.images.list_all(
+        model_id=model_id,  # required
+        only_finished=True,  # optional
+        page=1,  # optional
+        page_size=5,  # optional
+    )
+    images = list_all_response.body
+    
+    def load_url(uri):
+        for i in images:
+            p = ['prompt', 'images']
+            keys = dict((key, i[key]) for key in p)
+            image_url = keys['images'][0]['uri']
+            if 'uri' in image_url:
+                url = image_url[uri]
+                response = requests.get(url, stream=True)
+                if response.status_code == 200:
+                    img = Image.open((response).raw)
+                    img.save(os.path.join(path,'./GeneratedImages', image_file))
+                    return 'content'
+                else:
+                    return f"Failed to retrieve URL. Status code: {response.status_code}"
+            else:
+                return "URL key not found in the dictionary."
+    #print(len(images))
+    #print(images)
+        
+except ApiException as e:
+        print("Exception when calling ImagesApi.list_all: %s\n" % e)
+        pprint(e.body)
 
-
+load_url('uri')
 
 
 

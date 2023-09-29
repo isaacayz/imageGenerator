@@ -8,3 +8,4 @@ asyncio
 flask-bootstrap
 asgiref
 pillow
+aiohttp

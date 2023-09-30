@@ -51,7 +51,7 @@ def generate():
 
 
 @app.route('/listImages')
-async def listImages():
+def listImages():
     list_all_response = leap.images.list_all( 
         model_id=model_id,  # required
         only_finished=True,  # optional
@@ -59,15 +59,16 @@ async def listImages():
         page_size=3,  # optional
     )
     images = list_all_response.body
-    async def fetch_image(session, url, path):
+    async def fetch_image(session, url, path, name):
         try:
             async with session.get(url) as response:
                 if response.status == 200:
                     image_data = await response.read()
                     image = Image.open(io.BytesIO(image_data))
-                    image_file = os.path.basename(url)
+                    image.thumbnail((512,512))
+                    #image_file = os.path.basename(url)
                     #print(image_file)
-                    image.save(os.path.join(path, './GeneratedImages', image_file))
+                    image.save(os.path.join(path, './GeneratedImages', name[:15] + '.png'))
                 else:
                     return f"Failed to retrieve URL. Status code: {response.status}"
         except Exception as e:
@@ -76,21 +77,23 @@ async def listImages():
     async def download_images(images, path):
         async with aiohttp.ClientSession() as session:
             tasks = []
-            links = []
+            links = {}
             for i in images:
                 p = ['prompt', 'images']
                 keys = dict((key, i[key]) for key in p)
-                image_url = keys['images'][0]['uri']
-                links.append(image_url)
+                prompts, image_url = keys.values()
+                links.update({prompts: image_url[0]['uri'] })
             for link in links:
-                task = fetch_image(session, link, path)
+                task = fetch_image(session, links[link], path, link)
                 #print(link)
                 tasks.append(task)
             
             results = await asyncio.gather(*tasks)
             #print(results)
         return results
-    return 'Anything'
+    
+    result = asyncio.run(download_images(images, path))
+    return render_template('listImages.html', images=result)
 
 
 
@@ -116,7 +119,6 @@ async def listImages():
                         else:
                             return f"Failed to retrieve URL. Status code: {response.status_code}" """
         
-#asyncio.run(download_images(images, path))
 
 # List All Image Jobs
 """list_all_response = leap.images.list_all(

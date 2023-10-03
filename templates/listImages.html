@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
 </head>
 <body>
-    <h1 class="text-blue-600">Welcome to the skubeeduubee image generator!</h1>
-
-    <div class="image-container">
+        <h1 class="text-blue-600">Welcome to the skubeeduubee image generator!</h1>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">  
         {% for image in image_files %}
-            <img src="{{ url_for('static', filename='GeneratedImages/' + image) }}" alt="{{ image }}" width="300">
+         
+            <img class="h-auto max-w-full rounded-lg" src="{{ url_for('static', filename='GeneratedImages/' + image) }}" alt="{{ image }}" width="300">
+          
         {% endfor %}
     </div>
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </body>

@@ -14,6 +14,9 @@
             <img class="h-auto max-w-full rounded-lg" src="{{ url_for('static', filename='GeneratedImages/' + image) }}" alt="{{ image }}" width="300">
         {% endfor %}
     </div>
+    <form action="" method="POST">
+        <button type="submit">Fetch Images</button>
+    </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </body>

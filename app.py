@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from pprint import pprint
 from leap import Leap, ApiException
 import asyncio
@@ -16,7 +16,7 @@ leap = Leap(
     access_token=constants.key
 )
 
-path = os.path.dirname('GeneratedImages')
+path = os.path.dirname('./static/GeneratedImages')
 image_file = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.png"
 
 @app.route('/')
@@ -50,8 +50,9 @@ def generate():
         pprint(e.body)
 
 
-@app.route('/listImages')
+@app.route('/listImages', methods=['GET', 'POST'])
 def listImages():
+    image_files = []
     if request.method == 'GET':
         image_folder = 'static/GeneratedImages'
         image_files = [f for f in os.listdir(image_folder) if f.endswith(('.jpg', '.png', '.jpeg'))]
@@ -61,8 +62,8 @@ def listImages():
         list_all_response = leap.images.list_all( 
             model_id=model_id,  # required
             only_finished=True,  # optional
-            page=3,  # optional
-            page_size=3,  # optional
+            #page=3,  # optional
+            #page_size=3,  # optional
         )
         images = list_all_response.body
         async def fetch_image(session, url, path, name):
@@ -73,7 +74,7 @@ def listImages():
                         image = Image.open(io.BytesIO(image_data))
                         image.thumbnail((512,512))
                         #image_file = os.path.basename(url)
-                        #print(image_file)
+                        #print(image)
                         image.save(os.path.join(path, './GeneratedImages', name[:15] + '.png'))
                     else:
                         return f"Failed to retrieve URL. Status code: {response.status}"
@@ -99,7 +100,7 @@ def listImages():
             return results
         
         result = asyncio.run(download_images(images, path))
-        return render_template('listImages.html', images=result)
+        return redirect(url_for('listImages'))
     else:
         return 'There was an error'
 
